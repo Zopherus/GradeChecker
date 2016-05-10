@@ -1,0 +1,9 @@
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\bin\Debug\GradeChecking.exe.config
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\bin\Debug\GradeChecking.exe
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\bin\Debug\GradeChecking.pdb
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.csprojResolveAssemblyReference.cache
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.Form1.resources
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.Properties.Resources.resources
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.csproj.GenerateResource.Cache
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.exe
+C:\Users\Eric\Desktop\GradeChecking\GradeChecking\obj\Debug\GradeChecking.pdb
