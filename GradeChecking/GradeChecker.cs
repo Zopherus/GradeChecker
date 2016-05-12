@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.IO;
 
 namespace GradeChecking
 {
@@ -41,7 +42,7 @@ namespace GradeChecking
         private void buttonCheck_Click(object sender, EventArgs e)
         {
             string shows = GetSourceForMyShowsPage(textBoxUsername.Text,textBoxPassword.Text);
-            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + /*ToTwoDigits(DateTime.Now.Day.ToString())*/ "11"  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
+            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
             if (shows.Contains(date))
                 labelPassword.Text = "Grade has been updated";
 
@@ -54,15 +55,13 @@ namespace GradeChecking
                 labelPassword.Text += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
             }
 
-            ProcessStartInfo psi = new ProcessStartInfo("hello")
-            {
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
-            };
-
-            Process process = Process.Start(psi);
+			if (checkBoxRememberInfo.Checked)
+			{
+				using (StreamWriter streamWriter = new StreamWriter("info.txt"))
+				{
+					streamWriter.Write(textBoxUsername.Text + "," + textBoxPassword.Text);
+				}
+			}
         }
         
         public static List<int> AllIndexesOf(string str, string value) 
@@ -76,6 +75,19 @@ namespace GradeChecking
                 indexes.Add(index);
             }
         }
+
+		private void GradeChecker_Load(object sender, EventArgs e)
+		{
+			StreamReader streamReader = new StreamReader("info.txt");
+			string line = streamReader.ReadLine();
+			if (line != null && line != "")
+			{
+				string[] properties = line.Split(',');
+				textBoxUsername.Text = properties[0];
+				textBoxPassword.Text = properties[1];
+			}
+			streamReader.Close();
+		}
     }
 
     

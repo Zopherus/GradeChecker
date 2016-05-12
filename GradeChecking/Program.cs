@@ -16,7 +16,11 @@ namespace GradeChecking
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GradeChecker());
+			// If text file is empty
+			//while (true)
+			//{
+				Application.Run(new GradeChecker());
+			//}
         }
     }
 }
