@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
-using System.IO;
 using System.Collections.Specialized;
+using System.Diagnostics;
 
 namespace GradeChecking
 {
@@ -47,11 +41,44 @@ namespace GradeChecking
         private void buttonCheck_Click(object sender, EventArgs e)
         {
             string shows = GetSourceForMyShowsPage(textBoxUsername.Text,textBoxPassword.Text);
-            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString()) + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
+            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + /*ToTwoDigits(DateTime.Now.Day.ToString())*/ "11"  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
             if (shows.Contains(date))
                 labelPassword.Text = "Grade has been updated";
+
+            List<int> updated = AllIndexesOf(shows, date);
+            foreach(int value in updated)
+            {
+                string substring = shows.Substring(0, value);
+                int endPosition = substring.LastIndexOf("</a>");
+                int startPosition = substring.LastIndexOf("nsd.org");
+                labelPassword.Text += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo("hello")
+            {
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false,
+                RedirectStandardOutput = true
+            };
+
+            Process process = Process.Start(psi);
+        }
+        
+        public static List<int> AllIndexesOf(string str, string value) 
+        {
+            List<int> indexes = new List<int>();
+            for (int index = 0;; index += value.Length) 
+            {
+                index = str.IndexOf(value, index);
+                if (index == -1)
+                    return indexes;
+                indexes.Add(index);
+            }
         }
     }
+
+    
 
     public class WebClientEx : WebClient
     {
