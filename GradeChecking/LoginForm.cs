@@ -8,9 +8,9 @@ using System.IO;
 
 namespace GradeChecking
 {
-    public partial class GradeChecker : Form
+    public partial class LoginForm : Form
     {
-        public GradeChecker()
+        public LoginForm()
         {
             InitializeComponent();
         }
@@ -89,27 +89,4 @@ namespace GradeChecking
 			streamReader.Close();
 		}
     }
-
-    
-
-    public class WebClientEx : WebClient
-    {
-        public CookieContainer CookieContainer { get; private set; }
-
-        public WebClientEx()
-        {
-            CookieContainer = new CookieContainer();
-        }
-
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            var request = base.GetWebRequest(address);
-            if (request is HttpWebRequest)
-            {
-                (request as HttpWebRequest).CookieContainer = CookieContainer;
-            }
-            return request;
-        }
-    }
-
 }

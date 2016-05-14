@@ -25,3 +25,6 @@ C:\Users\Eric\Desktop\GitHub\GradeChecking\GradeChecking\obj\Debug\GradeChecking
 C:\Users\Eric\Desktop\GitHub\GradeChecking\GradeChecking\obj\Debug\GradeChecking.csproj.GenerateResource.Cache
 C:\Users\Eric\Desktop\GitHub\GradeChecking\GradeChecking\obj\Debug\GradeChecking.GradeChecker.resources
 C:\Users\1012746\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.GradeChecker.resources
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\GradeChecking.exe.config
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.exe
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.pdb
