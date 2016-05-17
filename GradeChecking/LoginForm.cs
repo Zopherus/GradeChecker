@@ -5,6 +5,7 @@ using System.Net;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace GradeChecking
 {
@@ -28,7 +29,9 @@ namespace GradeChecking
             {
                 using (StreamWriter streamWriter = new StreamWriter("info.txt"))
                 {
-                    streamWriter.Write(textBoxUsername.Text + "," + textBoxPassword.Text);
+                    string uname = Base64Encryption.Encode(textBoxUsername.Text);
+                    string pword = Base64Encryption.Encode(textBoxPassword.Text);
+                    streamWriter.Write(uname + "," + pword);
                 }
             }
             Program.uname = textBoxUsername.Text;

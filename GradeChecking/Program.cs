@@ -15,6 +15,8 @@ namespace GradeChecking
         public static string uname;
         public static string pword;
         private static string result;
+        private static string date;
+        private static List<string> teachersShown = new List<string>();
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -23,25 +25,40 @@ namespace GradeChecking
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            
 
 
-            StreamReader streamReader = new StreamReader("info.txt");
-			string line = streamReader.ReadLine();
+            date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString()) + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
+            StreamReader streamReader = new StreamReader("teachers.txt");
+            string line = streamReader.ReadLine();
+            while (line != null)
+            {
+                string[] properties = line.Split(',');
+                if (properties[1] == date)
+                {
+                    teachersShown.Add(properties[0]);
+                }
+                line = streamReader.ReadLine();
+            }
+
+            streamReader = new StreamReader("info.txt");
+			line = streamReader.ReadLine();
             streamReader.Close();
 			if (line != null && line != "")
 			{
 				string[] properties = line.Split(',');
-				uname = properties[0];
-				pword = properties[1];
+				uname = Base64Encryption.Decode(properties[0]);
+				pword = Base64Encryption.Decode(properties[1]);
 			}
             else
             {
                 Application.Run(new LoginForm());
             }
+            if (uname == null || pword == null)
+                return;
             StartTimer();
             while (true)
             {
-
             }
         }
 
@@ -56,25 +73,33 @@ namespace GradeChecking
         static void timerElapsed(object sender, ElapsedEventArgs e)
         {
             string shows = GetSourceForMyShowsPage(uname,pword);
-            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
+            date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
             
             if (shows.Contains(date))
             {
                 result = "";
                 List<int> updated = AllIndexesOf(shows, date);
+
+                bool showResults = false;
                 foreach(int value in updated)
                 {
                     string substring = shows.Substring(0, value);
                     int endPosition = substring.LastIndexOf("</a>");
                     int startPosition = substring.LastIndexOf("nsd.org");
-                    result += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
-                }
-                timer.Enabled = false;
-                Application.Run(new ResultsForm(result));
-                
+                    string teacherName = substring.Substring(startPosition + 9, endPosition - startPosition - 9);
+                    if (!teachersShown.Contains(teacherName))
+                    {
+                        teachersShown.Add(teacherName);
+                        StreamWriter streamWriter = new StreamWriter("teachers.txt");
+                        streamWriter.WriteLine(teacherName + "," + date);
+                        streamWriter.Close();
+                        result += teacherName + "\n";
+                        showResults = true;
+                    }
+                };
+                if (showResults)
+                    Application.Run(new ResultsForm(result));
             }
-
-            
         }
 
         static string GetSourceForMyShowsPage(string uname, string pword)
@@ -111,28 +136,6 @@ namespace GradeChecking
                     return indexes;
                 indexes.Add(index);
             }
-        }
-    }
-
-    
-
-    public class WebClientEx : WebClient
-    {
-        public CookieContainer CookieContainer { get; private set; }
-
-        public WebClientEx()
-        {
-            CookieContainer = new CookieContainer();
-        }
-
-        protected override WebRequest GetWebRequest(Uri address)
-        {
-            var request = base.GetWebRequest(address);
-            if (request is HttpWebRequest)
-            {
-                (request as HttpWebRequest).CookieContainer = CookieContainer;
-            }
-            return request;
         }
     }
 }
