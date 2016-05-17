@@ -28,14 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.textBoxUsername = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
             this.labelUsername = new System.Windows.Forms.Label();
             this.labelPassword = new System.Windows.Forms.Label();
             this.buttonLogin = new System.Windows.Forms.Button();
             this.checkBoxRememberInfo = new System.Windows.Forms.CheckBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // textBoxUsername
@@ -84,7 +82,7 @@
             this.buttonLogin.TabIndex = 4;
             this.buttonLogin.Text = "Login";
             this.buttonLogin.UseVisualStyleBackColor = true;
-            this.buttonLogin.Click += new System.EventHandler(this.buttonCheck_Click);
+            this.buttonLogin.Click += new System.EventHandler(this.buttonLogin_Click);
             // 
             // checkBoxRememberInfo
             // 
@@ -123,8 +121,7 @@
         private System.Windows.Forms.Label labelUsername;
         private System.Windows.Forms.Label labelPassword;
         private System.Windows.Forms.Button buttonLogin;
-		private System.Windows.Forms.CheckBox checkBoxRememberInfo;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.CheckBox checkBoxRememberInfo;
 
     }
 }

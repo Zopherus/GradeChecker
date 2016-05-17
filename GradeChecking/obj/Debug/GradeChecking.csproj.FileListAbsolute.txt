@@ -28,3 +28,10 @@ C:\Users\1012746\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.Grad
 C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\GradeChecking.exe.config
 C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.exe
 C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.pdb
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.csprojResolveAssemblyReference.cache
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.LoginForm.resources
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.Properties.Resources.resources
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.ResultsForm.resources
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.csproj.GenerateResource.Cache
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\GradeChecking.exe
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\GradeChecking.pdb

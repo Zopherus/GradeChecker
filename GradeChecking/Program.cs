@@ -12,6 +12,9 @@ namespace GradeChecking
     {
 
         private static System.Timers.Timer timer;
+        public static string uname;
+        public static string pword;
+        private static string result;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -20,56 +23,58 @@ namespace GradeChecking
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-           
+
 
             StreamReader streamReader = new StreamReader("info.txt");
 			string line = streamReader.ReadLine();
+            streamReader.Close();
 			if (line != null && line != "")
 			{
 				string[] properties = line.Split(',');
-				textBoxUsername.Text = properties[0];
-				textBoxPassword.Text = properties[1];
+				uname = properties[0];
+				pword = properties[1];
 			}
             else
             {
+                Application.Run(new LoginForm());
+            }
+            StartTimer();
+            while (true)
+            {
 
             }
-			streamReader.Close();
-            StartTimer();
-			Application.Run(new LoginForm());
         }
-
 
 
         private static void StartTimer()
         {
-            timer = new System.Timers.Timer(100000);
+            timer = new System.Timers.Timer(1000);
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
-
+            timer.Enabled = true;
         }
+
         static void timerElapsed(object sender, ElapsedEventArgs e)
         {
-            string shows = GetSourceForMyShowsPage(textBoxUsername.Text,textBoxPassword.Text);
+            string shows = GetSourceForMyShowsPage(uname,pword);
             string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
+            
             if (shows.Contains(date))
-			    Application.Run(new LoginForm());
-
-            List<int> updated = AllIndexesOf(shows, date);
-            foreach(int value in updated)
             {
-                string substring = shows.Substring(0, value);
-                int endPosition = substring.LastIndexOf("</a>");
-                int startPosition = substring.LastIndexOf("nsd.org");
-                labelPassword.Text += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
+                result = "";
+                List<int> updated = AllIndexesOf(shows, date);
+                foreach(int value in updated)
+                {
+                    string substring = shows.Substring(0, value);
+                    int endPosition = substring.LastIndexOf("</a>");
+                    int startPosition = substring.LastIndexOf("nsd.org");
+                    result += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
+                }
+                timer.Enabled = false;
+                Application.Run(new ResultsForm(result));
+                
             }
 
-			if (checkBoxRememberInfo.Checked)
-			{
-				using (StreamWriter streamWriter = new StreamWriter("info.txt"))
-				{
-					streamWriter.Write(textBoxUsername.Text + "," + textBoxPassword.Text);
-				}
-			}
+            
         }
 
         static string GetSourceForMyShowsPage(string uname, string pword)
@@ -94,31 +99,6 @@ namespace GradeChecking
             if (date.Length > 2)
                 date = date.Substring(date.Length - 2);
             return date;
-        }
-
-        private void buttonCheck_Click(object sender, EventArgs e)
-        {
-            string shows = GetSourceForMyShowsPage(textBoxUsername.Text,textBoxPassword.Text);
-            string date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
-            if (shows.Contains(date))
-                labelPassword.Text = "Grade has been updated";
-
-            List<int> updated = AllIndexesOf(shows, date);
-            foreach(int value in updated)
-            {
-                string substring = shows.Substring(0, value);
-                int endPosition = substring.LastIndexOf("</a>");
-                int startPosition = substring.LastIndexOf("nsd.org");
-                labelPassword.Text += substring.Substring(startPosition + 9, endPosition - startPosition - 9);
-            }
-
-			if (checkBoxRememberInfo.Checked)
-			{
-				using (StreamWriter streamWriter = new StreamWriter("info.txt"))
-				{
-					streamWriter.Write(textBoxUsername.Text + "," + textBoxPassword.Text);
-				}
-			}
         }
         
         public static List<int> AllIndexesOf(string str, string value) 
@@ -154,6 +134,5 @@ namespace GradeChecking
             }
             return request;
         }
-    }
     }
 }

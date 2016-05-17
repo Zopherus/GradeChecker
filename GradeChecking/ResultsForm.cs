@@ -12,9 +12,10 @@ namespace GradeChecking
 {
     public partial class ResultsForm : Form
     {
-        public ResultsForm()
+        public ResultsForm(string result)
         {
             InitializeComponent();
+            labelResults.Text = result;
         }
     }
 }
