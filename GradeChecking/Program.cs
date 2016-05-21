@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection;
 
 namespace GradeChecking
 {
@@ -25,25 +26,51 @@ namespace GradeChecking
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
+
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            Console.WriteLine(path);
+
+            if (!File.Exists(path + @"\GradeChecking.lnk"))
+            {
+                using (StreamWriter writer = new StreamWriter(path + "\\" + "Gradechecking" + ".lnk"))
+                {
+                    string app = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                    writer.WriteLine("[InternetShortcut]");
+                    writer.WriteLine("URL=file:///" + app);
+                    writer.WriteLine("IconIndex=0");
+                    string icon = app.Replace('\\', '/');
+                    writer.WriteLine("IconFile=" + icon);
+                    writer.Flush();
+                }
+            }
+
+
+
+            // Check if there already is a shortcut in this path and if not, create one
+
+
 
 
             date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString()) + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
-            StreamReader streamReader = new StreamReader("teachers.txt");
-            string line = streamReader.ReadLine();
-            while (line != null)
-            {
-                string[] properties = line.Split(',');
-                if (properties[1] == date)
-                {
-                    teachersShown.Add(properties[0]);
-                }
+            string line = "";
+            using (StreamReader streamReader = new StreamReader("teachers.txt"))
+            { 
                 line = streamReader.ReadLine();
+                while (line != null)
+                {
+                    string[] properties = line.Split(',');
+                    if (properties[1] == date)
+                    {
+                        teachersShown.Add(properties[0]);
+                    }
+                    line = streamReader.ReadLine();
+                }
             }
 
-            streamReader = new StreamReader("info.txt");
-			line = streamReader.ReadLine();
-            streamReader.Close();
+            using (StreamReader streamReader = new StreamReader("info.txt"))
+            {
+                line = streamReader.ReadLine();
+            }
 			if (line != null && line != "")
 			{
 				string[] properties = line.Split(',');
@@ -65,7 +92,7 @@ namespace GradeChecking
 
         private static void StartTimer()
         {
-            timer = new System.Timers.Timer(1000);
+            timer = new System.Timers.Timer(10000);
             timer.Elapsed += new ElapsedEventHandler(timerElapsed);
             timer.Enabled = true;
         }
@@ -73,6 +100,8 @@ namespace GradeChecking
         static void timerElapsed(object sender, ElapsedEventArgs e)
         {
             string shows = GetSourceForMyShowsPage(uname,pword);
+            if (shows == null)
+                return;
             date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
             
             if (shows.Contains(date))
@@ -90,30 +119,43 @@ namespace GradeChecking
                     if (!teachersShown.Contains(teacherName))
                     {
                         teachersShown.Add(teacherName);
-                        StreamWriter streamWriter = new StreamWriter("teachers.txt");
-                        streamWriter.WriteLine(teacherName + "," + date);
-                        streamWriter.Close();
+                        using (StreamWriter streamWriter = new StreamWriter("teachers.txt"))
+                        {
+                            streamWriter.WriteLine(teacherName + "," + date);
+                        }
+
+
+                        // Create a more detailed result with what the teacher updated 
                         result += teacherName + "\n";
                         showResults = true;
                     }
                 };
+
                 if (showResults)
                     Application.Run(new ResultsForm(result));
             }
         }
 
-        static string GetSourceForMyShowsPage(string uname, string pword)
+        public static string GetSourceForMyShowsPage(string uname, string pword)
         {
-            using (var client = new WebClientEx())
+            using (WebClientEx client = new WebClientEx())
             {
-                var values = new NameValueCollection
+                NameValueCollection values = new NameValueCollection
                 {
                     { "uname", uname },
                     { "pword", pword },
                 };
-                client.UploadValues("https://grades.nsd.org//login.php", values);
-                return client.DownloadString("https://grades.nsd.org/showreportcard.php");
+                try
+                {
+                    client.UploadValues("https://grades.nsd.org//login.php", values);
+                    return client.DownloadString("https://grades.nsd.org/showreportcard.php");
+                }
+                catch
+                {
+                    MessageBox.Show("Please connect to the internet.");
+                }
             }
+            return null;
         }
 
 

@@ -18,7 +18,7 @@ namespace GradeChecking
 
         protected override WebRequest GetWebRequest(Uri address)
         {
-            var request = base.GetWebRequest(address);
+            WebRequest request = base.GetWebRequest(address);
             if (request is HttpWebRequest)
             {
                 (request as HttpWebRequest).CookieContainer = CookieContainer;
