@@ -1,0 +1,16 @@
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\bin\Release\GradeChecking.exe.config
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\Interop.IWshRuntimeLibrary.dll
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.csproj.ResolveComReference.cache
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\bin\Release\GradeChecking.exe.manifest
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\bin\Release\GradeChecking.application
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\bin\Release\GradeChecking.exe
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\bin\Release\GradeChecking.pdb
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.LoginForm.resources
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.Properties.Resources.resources
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.ResultsForm.resources
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.csproj.GenerateResource.Cache
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.exe.manifest
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.application
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.exe
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.pdb
+C:\Users\Eric\Desktop\GitHub\GradeChecker\GradeChecking\obj\Release\GradeChecking.csprojResolveAssemblyReference.cache

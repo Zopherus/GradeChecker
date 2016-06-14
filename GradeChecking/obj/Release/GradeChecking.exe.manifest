@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GradeChecking.exe" size="18376">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GradeChecking.exe" size="17352">
       <assemblyIdentity name="GradeChecking" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LZM66uj0X+4pNz2mpBlpwgecAtXqRRUSRYGKf7QI9Xw=</dsig:DigestValue>
+        <dsig:DigestValue>ySZb8cPrF91oUsKCtFTdBx+8Ra4HGzjTjMqsk6G2HjE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

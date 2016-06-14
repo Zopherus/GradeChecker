@@ -6,6 +6,7 @@ using System.Net;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using IWshRuntimeLibrary;
 
 namespace GradeChecking
 {
@@ -17,6 +18,7 @@ namespace GradeChecking
         public static string pword;
         private static string result;
         private static string date;
+        private static bool connectedToInternet = true;
         private static List<string> teachersShown = new List<string>();
         /// <summary>
         /// The main entry point for the application.
@@ -28,26 +30,19 @@ namespace GradeChecking
             Application.SetCompatibleTextRenderingDefault(false);
 
             string path = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
-            Console.WriteLine(path);
 
-            if (!File.Exists(path + @"\GradeChecking.lnk"))
+
+            if (!System.IO.File.Exists(path + @"\GradeChecker.lnk"))
             {
-                using (StreamWriter writer = new StreamWriter(path + "\\" + "Gradechecking" + ".lnk"))
-                {
-                    string app = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                    writer.WriteLine("[InternetShortcut]");
-                    writer.WriteLine("URL=file:///" + app);
-                    writer.WriteLine("IconIndex=0");
-                    string icon = app.Replace('\\', '/');
-                    writer.WriteLine("IconFile=" + icon);
-                    writer.Flush();
-                }
+                string shortcutLocation = System.IO.Path.Combine(path, "Gradechecker.lnk");
+                WshShell shell = new WshShell();
+                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
+
+                shortcut.Description = "Northshore School District Grade Checking Updater";   // The description of the shortcut
+                shortcut.TargetPath = Assembly.GetExecutingAssembly().Location;                 // The path of the file that will launch when the shortcut is run
+                shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                shortcut.Save();
             }
-
-
-
-            // Check if there already is a shortcut in this path and if not, create one
-
 
 
 
@@ -82,7 +77,7 @@ namespace GradeChecking
                 Application.Run(new LoginForm());
             }
             if (uname == null || pword == null)
-                return;
+                Application.Run(new LoginForm());
             StartTimer();
             while (true)
             {
@@ -122,9 +117,8 @@ namespace GradeChecking
                         using (StreamWriter streamWriter = new StreamWriter("teachers.txt"))
                         {
                             streamWriter.WriteLine(teacherName + "," + date);
+                            streamWriter.Close();
                         }
-
-
                         // Create a more detailed result with what the teacher updated 
                         result += teacherName + "\n";
                         showResults = true;
@@ -148,11 +142,18 @@ namespace GradeChecking
                 try
                 {
                     client.UploadValues("https://grades.nsd.org//login.php", values);
-                    return client.DownloadString("https://grades.nsd.org/showreportcard.php");
+                    string result = client.DownloadString("https://grades.nsd.org/showreportcard.php");
+                    connectedToInternet = true;
+                    return result;
                 }
                 catch
                 {
-                    MessageBox.Show("Please connect to the internet.");
+                    if (connectedToInternet)
+                    {
+                        MessageBox.Show(@"Gradechecker cannot run as your device is not currently connected to the internet.
+                                        When internet connection is gained, Gradechecker will start running again.");
+                        connectedToInternet = false;
+                    }
                 }
             }
             return null;
