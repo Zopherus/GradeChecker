@@ -34,8 +34,8 @@ namespace GradeChecking
                     streamWriter.Write(uname + "," + pword);
                 }
             }
-            Program.uname = textBoxUsername.Text;
-            Program.pword = textBoxPassword.Text;
+            Program.username = textBoxUsername.Text;
+            Program.password = textBoxPassword.Text;
             this.Close();
         }
     }

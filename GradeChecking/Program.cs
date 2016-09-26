@@ -3,21 +3,27 @@ using System.Timers;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Net;
+using System.Drawing.Imaging;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using IWshRuntimeLibrary;
+using OpenQA.Selenium;
+using OpenQA.Selenium.PhantomJS;
+using OpenQA.Selenium.Support.Extensions;
 
 namespace GradeChecking
 {
     static class Program
     {
-
+        private const string WEBSITE_URL = "https://siswebpv.nsd.org/Login_Student_PXP.aspx";
+        private const string GRADEBOOK_URL = "https://siswebpv.nsd.org/PXP_Gradebook.aspx?AGU=0";
         private static System.Timers.Timer timer;
-        public static string uname;
-        public static string pword;
+        public static string username;
+        public static string password;
         private static string result;
         private static string date;
+        private static PhantomJSDriver WebDriver;
         private static bool connectedToInternet = true;
         private static List<string> teachersShown = new List<string>();
         /// <summary>
@@ -26,6 +32,7 @@ namespace GradeChecking
         [STAThread]
         static void Main()
         {
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
@@ -43,6 +50,8 @@ namespace GradeChecking
                 shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 shortcut.Save();
             }
+
+            WebDriver = new PhantomJSDriver();
 
 
 
@@ -69,14 +78,14 @@ namespace GradeChecking
 			if (line != null && line != "")
 			{
 				string[] properties = line.Split(',');
-				uname = Base64Encryption.Decode(properties[0]);
-				pword = Base64Encryption.Decode(properties[1]);
+				username = Base64Encryption.Decode(properties[0]);
+				password = Base64Encryption.Decode(properties[1]);
 			}
             else
             {
                 Application.Run(new LoginForm());
             }
-            if (uname == null || pword == null)
+            if (username == null || password == null)
                 Application.Run(new LoginForm());
             StartTimer();
             while (true)
@@ -94,7 +103,7 @@ namespace GradeChecking
 
         static void timerElapsed(object sender, ElapsedEventArgs e)
         {
-            string shows = GetSourceForMyShowsPage(uname,pword);
+            string shows = GetSourceForMyShowsPage(username,password);
             if (shows == null)
                 return;
             date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
@@ -130,33 +139,29 @@ namespace GradeChecking
             }
         }
 
-        public static string GetSourceForMyShowsPage(string uname, string pword)
+        public static string GetSourceForMyShowsPage(string username, string password)
         {
-            using (WebClientEx client = new WebClientEx())
+            WebDriver.Navigate().GoToUrl(WEBSITE_URL);
+            //try
+            //{
+                WebDriver.FindElement(By.Name("username")).SendKeys(username);
+                WebDriver.FindElement(By.Name("password")).SendKeys(password);
+                WebDriver.FindElement(By.Name("Submit1")).Click();
+                WebDriver.Navigate().GoToUrl(GRADEBOOK_URL);
+                WebDriver.TakeScreenshot().SaveAsFile("screenshot.png", ImageFormat.Png);
+                connectedToInternet = true;
+                return WebDriver.PageSource;
+            /*}
+            catch
             {
-                NameValueCollection values = new NameValueCollection
+                if (connectedToInternet)
                 {
-                    { "uname", uname },
-                    { "pword", pword },
-                };
-                try
-                {
-                    client.UploadValues("https://grades.nsd.org//login.php", values);
-                    string result = client.DownloadString("https://grades.nsd.org/showreportcard.php");
-                    connectedToInternet = true;
-                    return result;
-                }
-                catch
-                {
-                    if (connectedToInternet)
-                    {
-                        MessageBox.Show(@"Gradechecker cannot run as your device is not currently connected to the internet.
-                                        When internet connection is gained, Gradechecker will start running again.");
-                        connectedToInternet = false;
-                    }
+                    MessageBox.Show(@"Gradechecker cannot run as your device is not currently connected to the internet.
+                                    When internet connection is gained, Gradechecker will start running again.");
+                    connectedToInternet = false;
                 }
             }
-            return null;
+            return null;*/
         }
 
 
