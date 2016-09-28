@@ -50,8 +50,10 @@ namespace GradeChecking
                 shortcut.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 shortcut.Save();
             }
+            PhantomJSDriverService driverService = PhantomJSDriverService.CreateDefaultService();
+            driverService.HideCommandPromptWindow = true;
 
-            WebDriver = new PhantomJSDriver();
+            WebDriver = new PhantomJSDriver(driverService);
 
 
 
@@ -148,6 +150,10 @@ namespace GradeChecking
                 WebDriver.FindElement(By.Name("password")).SendKeys(password);
                 WebDriver.FindElement(By.Name("Submit1")).Click();
                 WebDriver.Navigate().GoToUrl(GRADEBOOK_URL);
+
+                IReadOnlyCollection<IWebElement> Classes = new ReadOnlyCollectionBuilder<T>(a.Concat(b))).ToReadOnlyCollection()
+                WebDriver.FindElements(By.ClassName("altrow1"));
+                WebDriver.FindElements(By.ClassName("altrow2"));
                 WebDriver.TakeScreenshot().SaveAsFile("screenshot.png", ImageFormat.Png);
                 connectedToInternet = true;
                 return WebDriver.PageSource;
