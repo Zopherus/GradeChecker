@@ -83,3 +83,11 @@ C:\Users\ejz19\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.Result
 C:\Users\ejz19\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.csproj.GenerateResource.Cache
 C:\Users\ejz19\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.exe.manifest
 C:\Users\ejz19\Desktop\GradeChecker\GradeChecking\obj\Debug\GradeChecking.application
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\Interop.IWshRuntimeLibrary.dll
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\obj\Debug\GradeChecking.csproj.ResolveComReference.cache
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\phantomjs.exe
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\phantomjs-license.txt
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\WebDriver.dll
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\WebDriver.Support.dll
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\WebDriver.xml
+C:\Users\ejz19\Desktop\Github\GradeChecker\GradeChecking\bin\Debug\WebDriver.Support.xml

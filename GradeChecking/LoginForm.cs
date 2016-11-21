@@ -27,7 +27,7 @@ namespace GradeChecking
 
             if (checkBoxRememberInfo.Checked)
             {
-                using (StreamWriter streamWriter = new StreamWriter("info.txt"))
+                using (StreamWriter streamWriter = new StreamWriter("Text Files/info.txt"))
                 {
                     string uname = Base64Encryption.Encode(textBoxUsername.Text);
                     string pword = Base64Encryption.Encode(textBoxPassword.Text);

@@ -1,16 +1,16 @@
-﻿using System;
-using System.Timers;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Net;
-using System.Drawing.Imaging;
-using System.Collections.Specialized;
-using System.IO;
-using System.Reflection;
-using IWshRuntimeLibrary;
+﻿using IWshRuntimeLibrary;
 using OpenQA.Selenium;
 using OpenQA.Selenium.PhantomJS;
 using OpenQA.Selenium.Support.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Timers;
+using System.Windows.Forms;
+using System.Threading;
 
 namespace GradeChecking
 {
@@ -59,8 +59,8 @@ namespace GradeChecking
 
             date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString()) + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
             string line = "";
-            using (StreamReader streamReader = new StreamReader("teachers.txt"))
-            { 
+            using (StreamReader streamReader = new StreamReader("Text Files/teachers.txt"))
+            {
                 line = streamReader.ReadLine();
                 while (line != null)
                 {
@@ -73,7 +73,7 @@ namespace GradeChecking
                 }
             }
 
-            using (StreamReader streamReader = new StreamReader("info.txt"))
+            using (StreamReader streamReader = new StreamReader("Text Files/info.txt"))
             {
                 line = streamReader.ReadLine();
             }
@@ -105,40 +105,69 @@ namespace GradeChecking
 
         static void timerElapsed(object sender, ElapsedEventArgs e)
         {
-            string shows = GetSourceForMyShowsPage(username,password);
-            if (shows == null)
-                return;
-            date = ToTwoDigits(DateTime.Now.Month.ToString()) + "-" + ToTwoDigits(DateTime.Now.Day.ToString())  + "-" + ToTwoDigits(DateTime.Now.Year.ToString());
-            
-            if (shows.Contains(date))
+            date = ToTwoDigits(DateTime.Now.Month.ToString()) + "/" + ToTwoDigits(DateTime.Now.Day.ToString())  + "/" + ToTwoDigits(DateTime.Now.Year.ToString());
+            WebDriver.Navigate().GoToUrl(WEBSITE_URL);
+            //try
+            //{
+            WebDriver.FindElement(By.Name("username")).SendKeys(username);
+            WebDriver.FindElement(By.Name("password")).SendKeys(password);
+            WebDriver.FindElement(By.Name("Submit1")).Click();
+            WebDriver.Navigate().GoToUrl(GRADEBOOK_URL);
+
+
+            IEnumerable<IWebElement> OddClasses = WebDriver.FindElements(By.ClassName("altrow1"));
+            IEnumerable<IWebElement> EvenClasses = WebDriver.FindElements(By.ClassName("altrow2"));
+            IEnumerable<IWebElement> Classes = OddClasses
+                                                .SelectMany((x, idx) => new[] { x, EvenClasses.ElementAt(idx) })
+                                                .Concat(EvenClasses.Skip(OddClasses.Count()));
+            if (!Directory.EnumerateFileSystemEntries("Text Files/Classes").Any())
             {
-                result = "";
-                List<int> updated = AllIndexesOf(shows, date);
-
-                bool showResults = false;
-                foreach(int value in updated)
+                for (int i = 0; i < Classes.Count(); i++)
                 {
-                    string substring = shows.Substring(0, value);
-                    int endPosition = substring.LastIndexOf("</a>");
-                    int startPosition = substring.LastIndexOf("nsd.org");
-                    string teacherName = substring.Substring(startPosition + 9, endPosition - startPosition - 9);
-                    if (!teachersShown.Contains(teacherName))
-                    {
-                        teachersShown.Add(teacherName);
-                        using (StreamWriter streamWriter = new StreamWriter("teachers.txt"))
-                        {
-                            streamWriter.WriteLine(teacherName + "," + date);
-                            streamWriter.Close();
-                        }
-                        // Create a more detailed result with what the teacher updated 
-                        result += teacherName + "\n";
-                        showResults = true;
-                    }
-                };
-
-                if (showResults)
-                    Application.Run(new ResultsForm(result));
+                    System.IO.File.CreateText("Text Files/Classes/" + i.ToString() + ".txt");
+                }
             }
+            List<string> ClassLinks = new List<string>();
+            foreach (IWebElement element in Classes)
+            {
+                ClassLinks.Add(element.FindElement(By.XPath("./td/a[1]")).GetAttribute("href"));
+            }
+            
+            for (int i = 0; i < ClassLinks.Count; i++)
+            {
+                WebDriver.Navigate().GoToUrl(ClassLinks[i]);
+
+                IEnumerable<IWebElement> OddDates = WebDriver.FindElements(By.ClassName("altrow1"));
+                IEnumerable<IWebElement> EvenDates = WebDriver.FindElements(By.ClassName("altrow2"));
+                IEnumerable<IWebElement> DateLinks = OddDates.Concat(EvenDates);
+                List<string> Dates = new List<string>();
+                foreach (IWebElement element in DateLinks)
+                {
+                    Dates.Add(element.FindElement(By.XPath("./td")).Text);
+                }
+
+                // Find all assignments that were uploaded today by teachers
+                // Grades are only updated if the points are also included in the grade
+                // If an assignment was uploaded but no point values were given, save it and continually check that assignment for points
+                if (Dates.Any(s => s == date))
+                {
+
+                }
+                WebDriver.TakeScreenshot().SaveAsFile("screenshot" + i.ToString() + ".png", ImageFormat.Png);
+            }
+            WebDriver.TakeScreenshot().SaveAsFile("screenshot.png", ImageFormat.Png);
+            connectedToInternet = true;
+            /*}
+            catch
+            {
+                if (connectedToInternet)
+                {
+                    MessageBox.Show(@"Gradechecker cannot run as your device is not currently connected to the internet.
+                                    When internet connection is gained, Gradechecker will start running again.");
+                    connectedToInternet = false;
+                }
+            }
+            return null;*/
         }
 
         public static string GetSourceForMyShowsPage(string username, string password)
@@ -146,17 +175,48 @@ namespace GradeChecking
             WebDriver.Navigate().GoToUrl(WEBSITE_URL);
             //try
             //{
-                WebDriver.FindElement(By.Name("username")).SendKeys(username);
-                WebDriver.FindElement(By.Name("password")).SendKeys(password);
-                WebDriver.FindElement(By.Name("Submit1")).Click();
-                WebDriver.Navigate().GoToUrl(GRADEBOOK_URL);
+            WebDriver.FindElement(By.Name("username")).SendKeys(username);
+            WebDriver.FindElement(By.Name("password")).SendKeys(password);
+            WebDriver.FindElement(By.Name("Submit1")).Click();
+            WebDriver.Navigate().GoToUrl(GRADEBOOK_URL);
 
-                IReadOnlyCollection<IWebElement> Classes = new ReadOnlyCollectionBuilder<T>(a.Concat(b))).ToReadOnlyCollection()
-                WebDriver.FindElements(By.ClassName("altrow1"));
-                WebDriver.FindElements(By.ClassName("altrow2"));
-                WebDriver.TakeScreenshot().SaveAsFile("screenshot.png", ImageFormat.Png);
-                connectedToInternet = true;
-                return WebDriver.PageSource;
+
+            IEnumerable<IWebElement> OddClasses = WebDriver.FindElements(By.ClassName("altrow1"));
+            IEnumerable<IWebElement> EvenClasses = WebDriver.FindElements(By.ClassName("altrow2"));
+            IEnumerable<IWebElement> Classes = OddClasses.Concat(EvenClasses);
+            if (!Directory.EnumerateFileSystemEntries("Text Files/Classes").Any())
+            {
+                for (int i = 0; i < Classes.Count(); i++)
+                {
+                    System.IO.File.CreateText("Text Files/Classes/" + i.ToString() + ".txt");
+                }
+            }
+            List<IWebElement> ClassLinks = new List<IWebElement>();
+            foreach (IWebElement element in Classes)
+            {
+                ClassLinks.Add(element.FindElement(By.XPath("./td/a[1]")));
+            }
+            ClassLinks[0].Click();
+            IEnumerable<IWebElement> OddDates = WebDriver.FindElements(By.ClassName("altrow1"));
+            IEnumerable<IWebElement> EvenDates = WebDriver.FindElements(By.ClassName("altrow2"));
+            IEnumerable<IWebElement> DateLinks = OddDates.Concat(EvenDates);
+            
+
+            List<string> Dates = new List<string>(); 
+            foreach (IWebElement element in DateLinks)
+            {
+                Console.WriteLine(element.Text);
+                Dates.Add(element.FindElement(By.XPath("./td")).Text);
+            }
+
+            // Find all assignments that were uploaded today by teachers
+            // Grades are only updated if the points are also included in the grade
+            // If an assignment was uploaded but no point values were given, save it and continually check that assignment for points
+
+
+            WebDriver.TakeScreenshot().SaveAsFile("screenshot.png", ImageFormat.Png);
+            connectedToInternet = true;
+            return WebDriver.PageSource;
             /*}
             catch
             {
